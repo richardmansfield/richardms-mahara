@@ -102,10 +102,10 @@ function addmembers_submit(Pieform $form, $values) {
                 'args'    => array(display_name($USER), hsc($group->name), get_config('sitename')),
             ),
         ),
-        'url'     => 'group/view.php?id=' . GROUP,
+        'url'     => group_homepage_url($group),
         'urltext' => hsc($group->name),
     ));
 
     $SESSION->add_ok_msg(get_string('recommendationssent', 'group', count($values['users'])));
-    redirect(get_config('wwwroot') . 'group/view.php?id=' . GROUP);
+    redirect(get_config('wwwroot') . group_homepage_url($group));
 }
