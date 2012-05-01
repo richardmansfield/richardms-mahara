@@ -3720,19 +3720,55 @@ class View {
 
     /**
      * Makes a URL for a view page
+     *
+     * @param bool $full return a full url
+     * @param bool $useid ignore clean url settings and always return a url with an id in it
+     * @param bool $greedy query for user/group objects if required to generate a clean url
+     *
+     * @return string
      */
-    public function get_url($full=true) {
+    public function get_url($full=true, $useid=false, $greedy=true) {
         if ($this->type == 'profile') {
-            $url = 'user/view.php?id=' . (int) $this->owner;
+            if (!$useid && ($greedy || isset($this->ownerobj))) {
+                $url = profile_url($this->get_owner_object());
+            }
+            else {
+                $url = 'user/view.php?id=' . (int) $this->owner;
+            }
         }
         else if ($this->type == 'dashboard') {
             $url = '';
         }
         else if ($this->type == 'grouphomepage') {
-            $url = 'group/view.php?id=' . $this->group;
+            if (!$useid && ($greedy || isset($this->groupobj))) {
+                $url = group_homepage_url($this->get_group_object());
+            }
+            else {
+                $url = 'group/view.php?id=' . $this->group;
+            }
         }
         else {
-            $url = 'view/view.php?id=' . (int) $this->id;
+            if (!$useid && !is_null($this->urlid) && get_config('cleanurls')) {
+                if ($this->owner) {
+                    if ($greedy && !isset($this->ownerobj)) {
+                        $this->get_owner_object();
+                    }
+                    if (!is_null($this->ownerobj->urlid)) {
+                        $url = profile_url($this->ownerobj) . '/' . $this->urlid;
+                    }
+                }
+                else if ($this->group) {
+                    if ($greedy && !isset($this->groupobj)) {
+                        $this->get_group_object();
+                    }
+                    if (!is_null($this->groupobj->urlid)) {
+                        $url = group_homepage_url($this->groupobj) . '/' . $this->urlid;
+                    }
+                }
+            }
+            if (!isset($url)) {
+                $url = 'view/view.php?id=' . (int) $this->id;
+            }
         }
         return $full ? (get_config('wwwroot') . $url) : $url;
     }
