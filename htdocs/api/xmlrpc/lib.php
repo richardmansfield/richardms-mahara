@@ -584,8 +584,7 @@ function get_views_for_user($username, $query=null) {
     $data->displayname = display_name($user);
     if ($data->count) {
         foreach ($data->data as &$v) {
-            $v['url'] = '/view/view.php?id=' . $v['id'];
-            $v['fullurl'] = get_config('wwwroot') . 'view/view.php?id=' . $v['id'];
+            $v['fullurl'] = get_config('wwwroot') . $v['url'];
         }
     }
     return $data;
