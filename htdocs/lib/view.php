@@ -52,6 +52,7 @@ class View {
     private $artefact_metadata;
     private $ownerobj;
     private $groupobj;
+    private $institutionobj;
     private $numcolumns;
     private $layout;
     private $theme;
@@ -611,7 +612,14 @@ class View {
         return $this->groupobj;
     }
 
-    
+    public function get_institution_object() {
+        if (!isset($this->institutionobj)) {
+            log_debug("querying institution $this->institution");
+            $this->institutionobj = get_record('institution', 'name', $this->get('institution'));
+        }
+        return $this->institutionobj;
+    }
+
     public function delete() {
         safe_require('artefact', 'comment');
         db_begin();
@@ -2005,6 +2013,13 @@ class View {
         } else if ($this->get('group')) {
             $group = $this->get_group_object();
             return $group->name;
+        }
+        else if ($i = $this->get('institution')) {
+            if ($i == 'mahara') {
+                return get_config('sitename');
+            }
+            $institution = $this->get_institution_object();
+            return $institution->displayname;
         }
         return null;
     }
