@@ -3355,7 +3355,7 @@ class View {
     }
 
 
-    public static function get_extra_view_info(&$viewdata, $getartefacts = true) {
+    public static function get_extra_view_info(&$viewdata, $getartefacts=true, $gettags=true) {
         if ($viewdata) {
             // Get view owner details for display
             $owners = array();
@@ -3397,15 +3397,26 @@ class View {
                     }
                 }
             }
-            $tags = get_records_select_array('view_tag', 'view IN (' . $viewidlist . ')');
-            if ($tags) {
-                foreach ($tags as &$tag) {
-                    $viewdata[$tag->view]->tags[] = $tag->tag;
+            if ($gettags) {
+                $tags = get_records_select_array('view_tag', 'view IN (' . $viewidlist . ')');
+                if ($tags) {
+                    foreach ($tags as &$tag) {
+                        $viewdata[$tag->view]->tags[] = $tag->tag;
+                    }
                 }
             }
             if (!empty($owners)) {
-                $owners = get_records_select_assoc('usr', 'id IN (' . join(',', $owners) . ')', null, '', 
-                                                   'id,username,firstname,lastname,preferredname,admin,staff,studentid,email,profileicon,urlid');
+                global $USER;
+                $userid = $USER->get('id');
+                if (count($owners) == 1 && isset($owners[$userid])) {
+                    $owners = array($userid => $USER->to_stdclass());
+                }
+                else {
+                    $owners = get_records_select_assoc(
+                        'usr', 'id IN (' . join(',', array_fill(0, count($owners), '?')) . ')', $owners, '',
+                        'id,username,firstname,lastname,preferredname,admin,staff,studentid,email,profileicon,urlid'
+                    );
+                }
             }
             if (!empty($groups)) {
                 require_once('group.php');
