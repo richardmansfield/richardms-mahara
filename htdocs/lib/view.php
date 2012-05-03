@@ -1106,7 +1106,7 @@ class View {
         ArtefactType::update_locked($this->owner);
         db_commit();
         $ownerlang = get_user_language($this->get('owner'));
-        $url = 'view/view.php?id=' . $this->get('id');
+        $url = $this->get_url(false);
         require_once('activity.php');
         activity_occurred('maharamessage', 
             array(
@@ -3673,7 +3673,7 @@ class View {
         }
 
         if ($titlelink) {
-            $title = '<a href="' . get_config('wwwroot') . 'view/view.php?id=' . $this->id . '">' . hsc($this->title) . '</a>';
+            $title = '<a href="' . $this->get_url() . '">' . hsc($this->title) . '</a>';
         }
         else {
             $title = '<strong>' . hsc($this->title) . '</strong>';
@@ -4437,7 +4437,7 @@ function objection_form_submit(Pieform $form, $values) {
         $goto = get_config('wwwroot') . 'view/artefact.php?artefact=' . $artefact->get('id') . '&view='.$view->get('id');
     }
     else {
-        $goto = get_config('wwwroot') . 'view/view.php?id='.$view->get('id');
+        $goto = $view->get_url();
     }
     $form->reply(PIEFORM_OK, array(
         'message' => get_string('reportsent', 'view'),
@@ -4473,7 +4473,7 @@ function viewnotrude_submit(Pieform $form, $values) {
         $goto = get_config('wwwroot') . 'view/artefact.php?artefact=' . $artefact->get('id') . '&view='.$view->get('id');
     }
     else {
-        $goto = get_config('wwwroot') . 'view/view.php?id='.$view->get('id');
+        $goto = $view->get_url();
     }
 
     $data = (object) array(
@@ -4509,7 +4509,7 @@ function viewnotrude_submit(Pieform $form, $values) {
 function objection_form_cancel_submit(Pieform $form) {
     global $view;
     $form->reply(PIEFORM_OK, array(
-        'goto' => '/view/view.php?id=' . $view->get('id'),
+        'goto' => $view->get_url(),
     ));
 }
 
