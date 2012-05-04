@@ -62,7 +62,7 @@
 			</li>
 			{foreach from=$user->views item=view}
 			<li>
-				<a href="{$WWWROOT}view/view.php?id={$view->id}">
+				<a href="{$WWWROOT}{$view->url}">
 				{$view->title}
 				</a>
 			</li>
