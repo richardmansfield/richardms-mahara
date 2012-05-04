@@ -3408,13 +3408,20 @@ class View {
             if (!empty($owners)) {
                 global $USER;
                 $userid = $USER->get('id');
+                $fields = array(
+                    'id', 'username', 'firstname', 'lastname', 'preferredname', 'admin', 'staff', 'studentid', 'email',
+                    'profileicon', 'urlid',
+                );
                 if (count($owners) == 1 && isset($owners[$userid])) {
-                    $owners = array($userid => $USER->to_stdclass());
+                    $owners = array($userid => new StdClass);
+                    foreach ($fields as $f) {
+                        $owners[$userid]->$f = $USER->get($f);
+                    }
                 }
                 else {
                     $owners = get_records_select_assoc(
                         'usr', 'id IN (' . join(',', array_fill(0, count($owners), '?')) . ')', $owners, '',
-                        'id,username,firstname,lastname,preferredname,admin,staff,studentid,email,profileicon,urlid'
+                        join(',', $fields)
                     );
                 }
             }
