@@ -61,6 +61,10 @@ class PluginBlocktypeExternalfeed extends SystemBlocktype {
             $data->content = unserialize($data->content);
             $data->image   = unserialize($data->image);
 
+            foreach ($data->content as $k => $c) {
+                $data->content[$k]->link =  sanitize_url($c->link);
+            }
+
             // Attempt to fix relative URLs in the feeds
             if (!empty($data->image['link'])) {
                 $data->description = preg_replace(
@@ -83,7 +87,7 @@ class PluginBlocktypeExternalfeed extends SystemBlocktype {
             $smarty->assign('url', $data->url);
             // 'full' won't be set for feeds created before 'full' support was added
             $smarty->assign('full', isset($configdata['full']) ? $configdata['full'] : false); 
-            $smarty->assign('link', $data->link);
+            $smarty->assign('link', sanitize_url($data->link));
             $smarty->assign('entries', $data->content);
             $smarty->assign('feedimage', self::make_feed_image_tag($data->image));
             $smarty->assign('lastupdated', get_string('lastupdatedon', 'blocktype.externalfeed', format_date(time($data->lastupdate))));
@@ -325,6 +329,10 @@ class PluginBlocktypeExternalfeed extends SystemBlocktype {
     private static function make_feed_image_tag($image) {
         $result = '';
 
+        if ($image['url']) {
+            $image['url'] = sanitize_url($image['url']);
+        }
+
         if (!$image['url']) {
             return '';
         }
@@ -334,8 +342,12 @@ class PluginBlocktypeExternalfeed extends SystemBlocktype {
             return '<img src="' . hsc($image) . '">';
         }
 
+        if ($image['link']) {
+            $image['link'] = sanitize_url($image['link']);
+        }
+
         if (!empty($image['link'])) {
-            $result .= '<a href="' . hsc($image['link']) . '">';
+            $result .= '<a href="' . $image['link'] . '">';
         }
 
         $url = $image['url'];
