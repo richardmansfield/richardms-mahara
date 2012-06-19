@@ -81,4 +81,5 @@ $string['requiredfieldsset'] = 'Required profile fields set';
 $string['noauthpluginconfigoptions'] = 'There are no configuration options associated with this plugin';
 
 $string['hostwwwrootinuse'] = 'WWW root already in use by another institution (%s)';
+$string['cannotjumpasmasqueradeduser'] = 'You cannot jump to another application whilst masquerading as another user.';
 ?>
