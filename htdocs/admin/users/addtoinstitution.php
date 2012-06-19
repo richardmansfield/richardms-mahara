@@ -33,6 +33,10 @@ require_once('institution.php');
 $id          = param_integer('id');
 $institution = new Institution(param_alpha('institution'));
 
+if (param_alphanum('sesskey') != $USER->get('sesskey')) {
+    throw new UserException('Invalid sesskey');
+}
+
 if (!$USER->get('admin')) {
     if (!$USER->is_institutional_admin($institution->name)) {
         $SESSION->add_error_msg(get_string('notadminforinstitution', 'admin'));
